@@ -22,8 +22,6 @@ export const metadata = {
   description: "Connecting street food vendors with affordable, trusted raw material suppliers.",
   keywords: ["RawEase", "raw material", "vendors", "hackathon", "suppliers", "Next.js"],
   authors: [{ name: "Your Team Name", url: "https://yourprojectlink.com" }],
-  themeColor: "#f97316", // Tailwind's orange-500
-  themeAccent: "#10b981", // Tailwind's emerald-500
 };
 
 export default function RootLayout({ children }) {

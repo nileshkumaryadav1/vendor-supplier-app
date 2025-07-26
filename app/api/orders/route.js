@@ -1,32 +1,42 @@
-// /api/orders/route.js
+import { NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import Order from "@/models/Order";
-import RawMaterial from "@/models/RawMaterial";
+import Material from "@/models/Material";
 
 export async function POST(req) {
   await connectDB();
   const body = await req.json();
 
   try {
-    const material = await RawMaterial.findById(body.materialId);
+    const { vendorId, materialId, quantity, totalPrice } = body;
+
+    // Fetch material
+    const material = await Material.findById(materialId);
     if (!material) {
-      return new Response(JSON.stringify({ message: "Material not found" }), { status: 404 });
+      return NextResponse.json({ message: "Material not found" }, { status: 404 });
     }
 
-    const totalPrice = material.pricePerKg * body.quantity;
+    // Check stock
+    if (material.availableQuantity < quantity) {
+      return NextResponse.json({ message: "Insufficient stock" }, { status: 400 });
+    }
 
-    const order = new Order({
-      vendorId: body.vendorId,
-      materialId: body.materialId,
-      quantity: body.quantity,
+    // Create order
+    const order = await Order.create({
+      vendorId,
+      materialId,
+      quantity,
       totalPrice,
-      status: "pending",
+      status: "Processing", // default
     });
 
-    await order.save();
-    return new Response(JSON.stringify(order), { status: 201 });
-  } catch (error) {
-    console.error("Order Error:", error);
-    return new Response(JSON.stringify({ message: "Server error", error: error.message }), { status: 500 });
+    // Decrease stock
+    material.availableQuantity -= quantity;
+    await material.save();
+
+    return NextResponse.json({ success: true, order });
+  } catch (err) {
+    console.error("Order error:", err);
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const RawMaterialSchema = new mongoose.Schema({
+const MaterialSchema = new mongoose.Schema({
   name: { type: String, required: true },
   category: String,
   pricePerKg: Number,
@@ -17,4 +17,4 @@ const RawMaterialSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.models.RawMaterial || mongoose.model("RawMaterial", RawMaterialSchema);
+export default mongoose.models.Material || mongoose.model("Material", MaterialSchema);

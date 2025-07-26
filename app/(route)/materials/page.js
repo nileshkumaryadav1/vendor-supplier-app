@@ -67,9 +67,12 @@ export default function MaterialsPage() {
   return (
     <section className="max-w-7xl mx-auto px-4 py-10">
       <div className="flex items-center gap-2 mb-6">
-        <Package className="text-blue-600" size={26} />
+        <Package className="text-[var(--accent)]" size={26} />
         <h1 className="text-3xl font-bold text-gray-800">
-          Browse <span className="text-[color:var(--accent,#3b82f6)]">Raw Materials</span>
+          Browse{" "}
+          <span className="text-[color:var(--accent,#3b82f6)]">
+            Raw Materials
+          </span>
         </h1>
       </div>
 
@@ -130,10 +133,14 @@ export default function MaterialsPage() {
               )}
 
               {/* Content */}
-              <h2 className="text-xl font-semibold text-gray-800">{mat.name}</h2>
+              <h2 className="text-xl font-semibold text-gray-800">
+                {mat.name}
+              </h2>
               <p className="text-sm text-gray-500 mb-1">{mat.category}</p>
               <p className="text-sm mb-1">💰 ₹{mat.pricePerKg} / kg</p>
-              <p className="text-sm mb-1">📦 {mat.availableQuantity} kg in stock</p>
+              <p className="text-sm mb-1">
+                📦 {mat.availableQuantity} kg in stock
+              </p>
               <p className="text-sm mb-2">🏷️ Grade: {mat.qualityGrade}</p>
 
               {/* Supplier */}

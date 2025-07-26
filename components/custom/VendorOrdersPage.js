@@ -19,8 +19,8 @@ export default function VendorOrdersPage() {
 
     if (storedVendor?._id) {
       fetch(`/api/orders/vendor/${storedVendor._id}`)
-        .then(res => res.json())
-        .then(data => setOrders(data));
+        .then((res) => res.json())
+        .then((data) => setOrders(data));
     }
   }, []);
 
@@ -32,7 +32,7 @@ export default function VendorOrdersPage() {
         <p>No orders yet.</p>
       ) : (
         <div className="space-y-4">
-          {orders.map(order => (
+          {orders.map((order) => (
             <div
               key={order._id}
               className="border p-4 rounded-md shadow-md bg-white"
@@ -40,7 +40,9 @@ export default function VendorOrdersPage() {
               <h2 className="text-lg font-semibold">{order.materialId.name}</h2>
               <p>Quantity: {order.quantity}</p>
               <p>Total Price: ₹{order.totalPrice}</p>
-              <p>Status: <span className="font-medium">{order.status}</span></p>
+              <p>
+                Status: <span className="font-medium">{order.status}</span>
+              </p>
               <p className="text-sm text-gray-500">
                 Ordered on {new Date(order.createdAt).toLocaleDateString()}
               </p>

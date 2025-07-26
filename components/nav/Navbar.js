@@ -25,7 +25,7 @@ export default function Navbar() {
     <nav className="bg-[var(--background)] text-[var(--foreground)] shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         {/* Brand */}
-        <Link href="/" className="text-2xl font-bold text-blue-600 tracking-tight">
+        <Link href="/" className="text-2xl font-bold text-[var(--accent)] tracking-tight">
           RawEase
         </Link>
 
@@ -37,8 +37,8 @@ export default function Navbar() {
               href={href}
               className={`flex items-center gap-2 transition-colors duration-200 ${
                 isActive(href)
-                  ? "text-blue-600 border-b-2 border-blue-600 pb-1"
-                  : "text-gray-700 hover:text-blue-600"
+                  ? "text-[var(--accent)] border-b-2 border-[var(--accent)] pb-1"
+                  : "text-gray-700 hover:text-[var(--accent)]"
               }`}
             >
               {icon}

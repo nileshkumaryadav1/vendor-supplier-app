@@ -9,11 +9,14 @@ export default function HeroSection() {
         {/* Text Content */}
         <div className="flex-1 text-center md:text-left">
           <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
-            Empowering <span className="text-green-600">Street Vendors</span><br />
+            Empowering <span className="text-green-600">Street Vendors</span>
+            <br />
             with Trusted Raw Materials
           </h1>
           <p className="text-lg md:text-xl text-gray-700 mb-8">
-            A platform built during Hackathon 2025 to connect local street food vendors with reliable, affordable suppliers — streamlining access to quality resources and boosting small businesses.
+            A platform built during Hackathon 2025 to connect local street food
+            vendors with reliable, affordable suppliers — streamlining access to
+            quality resources and boosting small businesses.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
             <Link
@@ -23,7 +26,7 @@ export default function HeroSection() {
               Explore Materials
             </Link>
             <Link
-              href="/vendors"
+              href="/register"
               className="px-6 py-3 border-2 border-green-600 text-green-600 text-lg rounded-xl font-semibold hover:bg-green-50 transition"
             >
               Join as a Vendor

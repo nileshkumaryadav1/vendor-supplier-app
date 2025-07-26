@@ -1,5 +1,5 @@
 import connectDB from "@/lib/db";
-import RawMaterial from "@/models/RawMaterial";
+import Material from "@/models/Material";
 
 export async function POST(req) {
   await connectDB();
@@ -15,7 +15,7 @@ export async function POST(req) {
     supplierId
   } = await req.json();
 
-  const material = await RawMaterial.create({
+  const material = await Material.create({
     name,
     category,
     pricePerKg,

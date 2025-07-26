@@ -1,14 +1,14 @@
 // app/api/orders/supplier/[id]/route.js
-import { connectDB } from "@/lib/db";
+import connectDB from "@/lib/db";
 import Order from "@/models/Order";
-import RawMaterial from "@/models/RawMaterial";
+import Material from "@/models/Material";
 
 export async function GET(req, { params }) {
   await connectDB();
   const { id } = params;
 
   // Get all materials created by this supplier
-  const materials = await RawMaterial.find({ supplierId: id }).select("_id");
+  const materials = await Material.find({ supplierId: id }).select("_id");
   const materialIds = materials.map((m) => m._id);
 
   // Get all orders for these materials

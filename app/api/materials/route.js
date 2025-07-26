@@ -1,12 +1,25 @@
 import connectDB from "@/lib/db";
-import RawMaterial from "@/models/RawMaterial";
-import User from "@/models/User"; // ✅ This is required for populate to work
+import Material from "@/models/Material";
 
-export async function GET() {
+export async function GET(req) {
   await connectDB();
 
-  const materials = await RawMaterial.find({})
-    .populate("supplierId", "name location");
+  try {
+    const materials = await Material.find({});
 
-  return new Response(JSON.stringify(materials), { status: 200 });
+    return new Response(JSON.stringify(materials), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Error fetching materials:", error);
+
+    return new Response(
+      JSON.stringify({ error: "Failed to fetch materials" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
 }

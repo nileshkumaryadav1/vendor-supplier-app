@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import LogoutButton from "@/components/custom/LogoutButton";
 import Link from "next/link";
+import AddedItems from "@/components/suppliers/AddedItems";
 
 export default function SupplierDashboard() {
   const [user, setUser] = useState(null);
@@ -30,6 +31,7 @@ export default function SupplierDashboard() {
         <li> <Link href="/supplier/orders" className="text-blue-500 hover:underline">Track Orders</Link></li>
         <li>See Reviews from Vendors</li>
       </ul>
+      <AddedItems />
       <LogoutButton />
     </div>
   );

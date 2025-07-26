@@ -1,31 +1,22 @@
-import { connectDB } from "@/lib/db";
-import Order from "@/models/Order";
 import { NextResponse } from "next/server";
+import connectDB from "@/lib/db";
+import Order from "@/models/Order";
+import Material from "@/models/Material";
 
-export async function PUT(req, { params }) {
+export async function GET(req, { params }) {
+  await connectDB();
+  const { id } = params; // vendorId
+
   try {
-    await connectDB();
+    const orders = await Order.find({ vendorId: id }).populate("materialId");
 
-    console.log("Received params:", params);
-    const { id } = params;
-
-    const body = await req.json();
-    console.log("Body received:", body);
-
-    const { status } = body;
-    if (!status) {
-      return NextResponse.json({ error: "Missing status field" }, { status: 400 });
+    if (!orders || orders.length === 0) {
+      return NextResponse.json([]);
     }
 
-    const updated = await Order.findByIdAndUpdate(id, { status }, { new: true });
-
-    if (!updated) {
-      return NextResponse.json({ error: "Order not found" }, { status: 404 });
-    }
-
-    return NextResponse.json(updated);
+    return NextResponse.json(orders);
   } catch (err) {
-    console.error("Error updating order:", err.message, err.stack);
-    return NextResponse.json({ error: err.message || "Internal Server Error" }, { status: 500 });
+    console.error("Get orders error:", err);
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }
