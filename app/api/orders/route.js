@@ -1,23 +1,32 @@
+// /api/orders/route.js
 import connectDB from "@/lib/db";
 import Order from "@/models/Order";
-import RawMaterial from "@/models/RawMaterial"; // import Material to get price
+import RawMaterial from "@/models/RawMaterial";
 
 export async function POST(req) {
   await connectDB();
   const body = await req.json();
 
-  // Get the material to get the price
-  const material = await RawMaterial.findById(body.materialId);
-  const totalPrice = material.price * body.quantity;
+  try {
+    const material = await RawMaterial.findById(body.materialId);
+    if (!material) {
+      return new Response(JSON.stringify({ message: "Material not found" }), { status: 404 });
+    }
 
-  const order = new Order({
-    vendorId: body.vendorId,
-    materialId: body.materialId,
-    quantity: body.quantity,
-    totalPrice, // save total price
-    status: "pending",
-  });
+    const totalPrice = material.pricePerKg * body.quantity;
 
-  await order.save();
-  return new Response(JSON.stringify(order), { status: 201 });
+    const order = new Order({
+      vendorId: body.vendorId,
+      materialId: body.materialId,
+      quantity: body.quantity,
+      totalPrice,
+      status: "pending",
+    });
+
+    await order.save();
+    return new Response(JSON.stringify(order), { status: 201 });
+  } catch (error) {
+    console.error("Order Error:", error);
+    return new Response(JSON.stringify({ message: "Server error", error: error.message }), { status: 500 });
+  }
 }

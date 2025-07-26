@@ -17,7 +17,7 @@ export default function HeroSection() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
             <Link
-              href="/explore"
+              href="/materials"
               className="px-6 py-3 bg-green-600 text-white text-lg rounded-xl font-semibold hover:bg-green-700 transition"
             >
               Explore Materials

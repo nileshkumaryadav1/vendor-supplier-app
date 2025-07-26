@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 📦 RawEase — Empowering Street Food Vendors - [Live](https://vendor-supplier-app.vercel.app)
 
-## Getting Started
+> **Connecting Street Vendors with Trusted Raw Material Suppliers**  
+> A smart, scalable, and inclusive platform built during [Hackathon Name].
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Overview
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Street food vendors form the backbone of our local economy, but sourcing quality raw materials remains a challenge — unreliable suppliers, high costs, and lack of access to wholesale networks.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+**RawEase** bridges this gap with a digital supply chain platform where:
+- 🛒 **Vendors** can order verified raw materials easily.
+- 📦 **Suppliers** can list their stock and reach more customers.
+- 📊 Smart dashboards, recommendations, and order tracking are built-in.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🎯 Problem Statement
 
-To learn more about Next.js, take a look at the following resources:
+> *“Street food vendors do not get good and cheap raw material from trusted sources.”*
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This leads to:
+- Lack of quality control
+- High prices due to middlemen
+- No bargaining power
+- No digital trace or support system
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 💡 Our Solution
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+RawEase is a **web-based platform** that enables:
+- 🔎 **Verified Supplier Discovery**
+- 📥 **Bulk Raw Material Ordering**
+- 📈 **Smart Order Insights** for vendors
+- 🧾 Transparent pricing & invoice history
+- 📍 Geolocation-based matching for logistics
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🛠️ Tech Stack
+
+| Layer        | Tools / Frameworks                   |
+|--------------|--------------------------------------|
+| Frontend     | `Next.js` App Router, Tailwind CSS   |
+| Backend      | `Node.js`, `Express`, `MongoDB`      |
+| Auth         | JSON Web Tokens (JWT)                |
+| UI/UX        | Responsive design, mobile-first UX   |
+| Deployment   | Vercel / Render / Railway (based on needs) |
+
+---
+
+## 👥 Target Users
+
+- **Street Vendors**: to order safe, affordable raw materials
+- **Suppliers/Wholesalers**: to list and manage inventory
+- **NGOs & Local Authorities**: to onboard and support vendors
+
+---
+
+## ⚙️ Core Features
+
+- ✅ Vendor Login/Register
+- ✅ Supplier Dashboard
+- ✅ Eventual Marketplace for Products
+- ✅ Real-time Inventory Updates
+- ✅ Role-based Access (Vendor/Supplier/Admin)
+- ✅ Responsive + Accessible Design
+- 🔜 [Planned] Delivery Scheduling, UPI Payment Integration
+
+---
+
+## 📷 Screenshots
+
+> _(Comming Soon...!)_
+
+---
+
+## 🧠 What Makes RawEase Stand Out?
+
+- **Grassroots Impact**: Empowers a marginalized yet critical workforce
+- **Scalable**: Can plug into existing government schemes (PM-SVANidhi, etc.)
+- **Technically Solid**: Built with modern stack & secure best practices
+- **Adaptable**: Easily extensible to new cities, suppliers, NGOs
+
+---
+
+## 🏆 Why We Should Win
+
+- Solves a **real, ignored problem** with direct social impact
+- Demonstrates **end-to-end full-stack execution** in a short time
+- Uses **clean, modular code + professional UI**
+- Has **strong potential for real-world adoption** post-hackathon
+
+---
+
+## 📍 Team
+
+| Name         | Role               | GitHub / LinkedIn     |
+|--------------|--------------------|------------------------|
+| Nilesh Kumar | Full Stack Developer  | [GitHub](#) / [LinkedIn](#) |
+
+---
+
+## 📄 License
+
+This project is licensed under [MIT License](LICENSE).

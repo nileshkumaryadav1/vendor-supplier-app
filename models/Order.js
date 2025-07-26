@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema({
   vendorId: { type: mongoose.Schema.Types.ObjectId, ref: "Vendor", required: true },
-  materialId: { type: mongoose.Schema.Types.ObjectId, ref: "Material", required: true },
+  materialId: { type: mongoose.Schema.Types.ObjectId, ref: "RawMaterial", required: true },
   quantity: Number,
   totalPrice: Number,
   status: { type: String, default: "pending" }, // pending, accepted, delivered
