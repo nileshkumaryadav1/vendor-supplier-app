@@ -25,6 +25,9 @@ export default function Navbar() {
           >
             Dashboard
           </Link>
+          <Link href="/suppliers" className="text-gray-700 hover:text-blue-600 transition">
+            Suppliers
+          </Link>
           <Link
             href="/vendor/orders"
             className="text-gray-700 hover:text-blue-600 transition"
