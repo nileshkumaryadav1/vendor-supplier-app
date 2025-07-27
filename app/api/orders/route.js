@@ -18,9 +18,7 @@ export async function GET(req) {
 
   try {
     const orders = await Order.find(query)
-      .populate("materialId", "name pricePerKg")
-      .populate("vendorId", "name email")
-      .populate("supplierId", "name email");
+      .populate("materialId", "supplierId")
 
     return new Response(JSON.stringify(orders), {
       status: 200,

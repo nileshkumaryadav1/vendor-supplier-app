@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "seed:superadmin": "node scripts/seedSuperAdmin.js",
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
@@ -15,6 +16,7 @@
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",
+    "dotenv": "^17.2.1",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.525.0",
     "mongoose": "^8.16.5",

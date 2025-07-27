@@ -171,6 +171,15 @@ export default function SupplierMaterialsPage() {
             <input
               type="text"
               className="w-full border p-2 rounded"
+              placeholder="imageUrl"
+              value={editMaterial.imageUrl}
+              onChange={(e) =>
+                setEditMaterial({ ...editMaterial, imageUrl: e.target.value })
+              }
+            />
+            <input
+              type="text"
+              className="w-full border p-2 rounded"
               placeholder="Location"
               value={editMaterial.location}
               onChange={(e) =>

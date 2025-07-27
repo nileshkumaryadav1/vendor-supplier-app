@@ -4,7 +4,7 @@ const OrderSchema = new mongoose.Schema(
   {
     vendorId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     materialId: { type: mongoose.Schema.Types.ObjectId, ref: "Material", required: true },
-    supplierId: { type: mongoose.Schema.Types.ObjectId, ref: "Supplier" }, // ✅ Capitalized
+    supplierId: { type: mongoose.Schema.Types.ObjectId, ref: "Supplier" },
     quantity: { type: Number, required: true },
     totalPrice: { type: Number, required: true },
     status: {
@@ -19,7 +19,7 @@ const OrderSchema = new mongoose.Schema(
       default: "Cash",
     },
   expectedDeliveryDate: { type: Date },
-  },
+  },  
   { timestamps: true }
 );
 

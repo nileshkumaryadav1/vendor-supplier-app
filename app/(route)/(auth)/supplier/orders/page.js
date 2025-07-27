@@ -2,94 +2,51 @@
 
 import { useEffect, useState } from "react";
 
-export default function OrdersReceivedPage({ user }) {
+export default function SupplierOrders() {
   const [orders, setOrders] = useState([]);
-  const [filteredOrders, setFilteredOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [updating, setUpdating] = useState(false);
+  const [supplierId, setSupplierId] = useState(null);
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const res = await fetch("/api/orders");
-        const allOrders = await res.json();
-
-        // Filter: only orders for this supplier’s materials
-        const supplierOrders = allOrders.filter(
-          (order) => order.materialId?.supplierId === user._id
-        );
-
-        setOrders(supplierOrders);
-      } catch (err) {
-        console.error("Failed to fetch orders", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchOrders();
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user?.role === "supplier") {
+      setSupplierId(user._id);
+    }
   }, []);
 
-  const handleDeliveryDateUpdate = async (orderId, newDate) => {
-    setUpdating(true);
-    try {
-      const res = await fetch(`/api/orders/${orderId}/delivery`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ deliveryDate: newDate }),
-      });
+  useEffect(() => {
+    fetch("/api/orders")
+      .then((res) => res.json())
+      .then((data) => setOrders(data))
+      .catch((err) => console.error("Failed to load orders", err));
+  }, []);
 
-      if (res.ok) {
-        const updated = await res.json();
-        setOrders((prev) =>
-          prev.map((order) =>
-            order._id === orderId ? { ...order, deliveryDate: newDate } : order
-          )
-        );
-      } else {
-        console.error("Failed to update delivery date");
-      }
-    } catch (error) {
-      console.error("Error updating date", error);
-    } finally {
-      setUpdating(false);
-    }
-  };
-
-  if (loading) return <p>Loading orders...</p>;
+  const filteredOrders = orders.filter(
+    (order) => order.supplierId === supplierId
+  );
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">📦 Orders Received</h2>
+    <div className="p-4">
+      <h1 className="text-xl font-bold mb-6">Order Received</h1>
 
-      {orders.length === 0 ? (
-        <p>No orders received for your materials.</p>
+      {filteredOrders.length === 0 ? (
+        <p>No orders found.</p>
       ) : (
         <div className="space-y-4">
-          {orders.map((order) => (
-            <div key={order._id} className="p-4 border rounded shadow-sm">
+          {filteredOrders.map((order) => (
+            <div
+              key={order._id}
+              className="bg-white p-4 rounded-md shadow-md border"
+            >
+              <h2 className="text-lg font-semibold">
+                {order.materialId?.name || "Material Name Not Found"}
+              </h2>
+              <p>Vendor: {order.vendorId?.name}</p>
+              <p>Supplier: {order.supplierId?.name}</p>
+              <p>Quantity: {order.quantity}</p>
+              <p>Total: ₹{order.totalPrice}</p>
               <p>
-                <strong>Material:</strong> {order.materialId?.name}
+                Status: <strong>{order.status}</strong>
               </p>
-              <p>
-                <strong>Quantity:</strong> {order.quantity}
-              </p>
-              <p>
-                <strong>Status:</strong> {order.status}
-              </p>
-              <p>
-                <strong>Delivery Date:</strong>{" "}
-                {order.deliveryDate || "Not set"}
-              </p>
-
-              <input
-                type="date"
-                className="border px-2 py-1 mt-2"
-                onChange={(e) =>
-                  handleDeliveryDateUpdate(order._id, e.target.value)
-                }
-                disabled={updating}
-              />
             </div>
           ))}
         </div>

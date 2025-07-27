@@ -13,7 +13,7 @@ export default function EditProfilePage() {
     shopName: "",
     location: "",
     status: "",
-    Verified: "",
+    Verified: false,
   });
 
   const [loading, setLoading] = useState(true);
@@ -23,7 +23,6 @@ export default function EditProfilePage() {
   useEffect(() => {
     try {
       const stored = JSON.parse(localStorage.getItem("user"));
-
       if (!stored || !stored._id) {
         router.push("/login");
         return;
@@ -37,12 +36,11 @@ export default function EditProfilePage() {
         role: stored.role || "",
         shopName: stored.shopName || "",
         location: stored.location || "",
-        status: stored.status || "",
-        Verified: stored.Verified || "",
+        status: stored.status || "Inactive",
+        Verified: stored.Verified || false,
       });
-
     } catch (err) {
-      console.error("Error loading user data:", err);
+      console.error("Error parsing user data:", err);
       router.push("/login");
     } finally {
       setLoading(false);
@@ -64,14 +62,20 @@ export default function EditProfilePage() {
       });
 
       const data = await res.json();
+
       if (res.ok) {
         setMessage("✅ Profile updated successfully!");
-        localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("token", data.token);
+        if (data.updatedUser) {
+          localStorage.setItem("user", JSON.stringify(data.updatedUser));
+        }
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
+        // Optionally redirect
         // router.push("/dashboard");
       } else {
         setMessage("❌ Failed to update profile.");
-        console.error("Error updating profile:", data);
+        console.error("Update error:", data);
       }
     } catch (error) {
       console.error("Submit error:", error);
@@ -86,9 +90,9 @@ export default function EditProfilePage() {
       <h1 className="text-2xl font-bold mb-6">Edit Your Profile</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div><p>ID: {formData._id}</p></div>
-        <div><p>Activeness: {formData.status || "N/A"}</p></div>
-        <div><p>Verified: {formData.Verified ? "Yes" : "No"}</p></div>
+        <div><p className="text-sm text-gray-600">User ID: {formData._id}</p></div>
+        <div><p className="text-sm">Activeness: <strong>{formData.status}</strong></p></div>
+        <div><p className="text-sm">Verified: <strong>{formData.Verified ? "✅ Yes" : "❌ No"}</strong></p></div>
 
         <div>
           <label className="block mb-1 font-medium">Full Name</label>
@@ -105,10 +109,10 @@ export default function EditProfilePage() {
           <label className="block mb-1 font-medium">Email</label>
           <input
             name="email"
+            type="email"
             value={formData.email}
             onChange={handleChange}
             className="w-full p-2 rounded border bg-[var(--background)]"
-            type="email"
             required
           />
         </div>
@@ -117,10 +121,10 @@ export default function EditProfilePage() {
           <label className="block mb-1 font-medium">Phone</label>
           <input
             name="phone"
+            type="tel"
             value={formData.phone}
             onChange={handleChange}
             className="w-full p-2 rounded border bg-[var(--background)]"
-            type="tel"
             required
           />
         </div>

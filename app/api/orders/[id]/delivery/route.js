@@ -5,20 +5,26 @@ export async function PATCH(req, { params }) {
   await connectDB();
 
   try {
-    const { id } = params;
     const { deliveryDate } = await req.json();
+    const { id: orderId } = params;
 
-    const updatedOrder = await Order.findByIdAndUpdate(
-      id,
+    if (!deliveryDate) {
+      return new Response(JSON.stringify({ error: "Missing deliveryDate" }), { status: 400 });
+    }
+
+    const updated = await Order.findByIdAndUpdate(
+      orderId,
       { deliveryDate },
       { new: true }
     );
 
-    return new Response(JSON.stringify(updatedOrder), { status: 200 });
+    if (!updated) {
+      return new Response(JSON.stringify({ error: "Order not found" }), { status: 404 });
+    }
+
+    return new Response(JSON.stringify({ message: "Updated", order: updated }), { status: 200 });
   } catch (err) {
-    console.error("Error updating delivery date:", err);
-    return new Response(JSON.stringify({ message: "Update failed" }), {
-      status: 500,
-    });
+    console.error("❌ Delivery date update error:", err);
+    return new Response(JSON.stringify({ error: "Server error" }), { status: 500 });
   }
 }
