@@ -1,6 +1,6 @@
 // /app/api/admin/add/route.js or route.ts
 import { NextResponse } from "next/server";
-import connectDB from "@/utils/db";
+import connectDB from "@/lib/db";
 import Admin from "@/models/Admin";
 import bcrypt from "bcryptjs";
 

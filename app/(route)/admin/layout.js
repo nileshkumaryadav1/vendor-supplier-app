@@ -16,10 +16,10 @@ import {
 // Admin Navigation Links
 const adminLinks = [
   { name: "Dashboard", href: "/admin", icon: <LayoutDashboard className="w-5 h-5" /> },
-  { name: "Add Items", href: "/admin/homepage", icon: <LayoutDashboard className="w-5 h-5" /> },
-  { name: "All Events", href: "/admin/events", icon: <LayoutDashboard className="w-5 h-5" /> },
-  { name: "Registrations", href: "/admin/users", icon: <Users className="w-5 h-5" /> },
-  { name: "Winners", href: "/admin/winners", icon: <Trophy className="w-5 h-5" /> },
+  { name: "All Materials", href: "/admin/materials", icon: <LayoutDashboard className="w-5 h-5" /> },
+  { name: "All Suppliers", href: "/admin/suppliers", icon: <LayoutDashboard className="w-5 h-5" /> },
+  { name: "All Vendors", href: "/admin/vendors", icon: <LayoutDashboard className="w-5 h-5" /> },
+  { name: "All Orders", href: "/admin/orders", icon: <Users className="w-5 h-5" /> },
   { name: "Settings", href: "/admin/settings", icon: <Settings className="w-5 h-5" /> },
 ];
 

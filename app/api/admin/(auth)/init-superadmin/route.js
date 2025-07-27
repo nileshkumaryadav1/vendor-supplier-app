@@ -1,7 +1,7 @@
 // app/api/init-superadmin/route.js
 import { NextResponse } from "next/server";
 import Admin from "@/models/Admin";
-import connectDB from "@/utils/db";
+import connectDB from "@/lib/db";
 import bcrypt from "bcryptjs";
 
 export async function GET() {
@@ -16,7 +16,7 @@ export async function GET() {
 
   const newAdmin = new Admin({
     name: "Super Admin",
-    email: "superadmin@fest.com",
+    email: "superadmin@gmail.com",
     password: hashedPassword,
     role: "superadmin",
   });

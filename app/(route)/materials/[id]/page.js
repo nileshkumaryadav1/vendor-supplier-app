@@ -57,6 +57,7 @@ export default function MaterialDetailPage() {
           totalPrice: Number(quantity) * Number(material.pricePerKg),
           location: user.location,
           paymentMethod: "Cash",
+          supplierId: material.supplierId,
         }),
       });
 

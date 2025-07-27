@@ -19,7 +19,7 @@ export default function AdminEvents() {
 
   const fetchEvents = async () => {
     try {
-      const res = await axios.get("/api/admin/events");
+      const res = await axios.get("/api/admin/materials");
       const valid = res.data.filter((e) => e && e._id && e.title);
       setEvents(valid);
     } catch (err) {
@@ -27,21 +27,21 @@ export default function AdminEvents() {
     }
   };
 
-  const fetchWinnerEvents = async () => {
+  const fetchOrder = async () => {
     try {
-      const res = await axios.get("/api/admin/winners");
+      const res = await axios.get("/api/admin/orders");
       if (res.data.success) setAllEvents(res.data.events);
     } catch (err) {
       console.error("Failed to fetch winner events:", err);
     }
   };
 
-  const handleEditClick = async (event) => {
+  const handleEditClick = async (order) => {
     setEditingEvent(event._id);
     setForm(event);
 
     try {
-      const res = await axios.get(`/api/admin/enrolled?eventId=${event._id}`);
+      const res = await axios.get(`/api/admin/order?supplierId=${supperlier._id}`);
       setEnrolledStudents(res.data || []);
     } catch (err) {
       console.error("Failed to fetch enrolled students:", err);

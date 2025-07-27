@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import connectDB from "@/utils/db";
+import connectDB from "@/lib/db";
 import Admin from "@/models/Admin";
 
 // Login Handler

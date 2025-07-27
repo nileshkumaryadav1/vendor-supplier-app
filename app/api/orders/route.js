@@ -2,14 +2,37 @@ import connectDB from "@/lib/db";
 import Order from "@/models/Order";
 import Material from "@/models/Material";
 
+export async function GET() {
+  try {
+    // Connect to the database
+    await connectDB();
+
+    // Fetch all orders with populated references
+    const orders = await Order.find({})
+      .populate("materialId", "name") // only populate name field from Material
+      .populate("vendorId", "name")   // only populate name field from Vendor (User)
+      .populate("supplierId", "name"); // only populate name field from Supplier (User)
+
+    return new Response(JSON.stringify(orders), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("❌ Error fetching orders:", error);
+    return new Response(JSON.stringify({ error: "Failed to fetch orders" }), {
+      status: 500,
+    });
+  }
+}
+
 export async function POST(req) {
   await connectDB();
 
   try {
-    const { vendorId, materialId, quantity, location } = await req.json();
+    const { vendorId, supplierId, materialId, quantity, location } = await req.json();
 
     // Validate inputs
-    if (!vendorId || !materialId || !quantity || !location) {
+    if (!vendorId || !supplierId || !materialId || !quantity || !location) {
       return new Response(JSON.stringify({ error: "Missing required fields" }), { status: 400 });
     }
 
@@ -25,6 +48,7 @@ export async function POST(req) {
     // Create order
     const order = await Order.create({
       vendorId,
+      supplierId,
       materialId,
       quantity,
       totalPrice,
