@@ -7,6 +7,8 @@ const OrderSchema = new mongoose.Schema(
     quantity: { type: Number, required: true },
     totalPrice: { type: Number, required: true },
     status: { type: String, enum: ["Processing", "Shipped", "Delivered"], default: "Processing" },
+    location: String,
+    paymentMethod: { type: String, enum: ["Cash", "Online"], default: "Cash" },
   },
   { timestamps: true }
 );

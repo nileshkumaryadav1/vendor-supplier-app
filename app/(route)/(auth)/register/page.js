@@ -24,6 +24,7 @@ export default function RegisterPage() {
         if (userData.role === "vendor") router.push("/dashboard");
         else if (userData.role === "supplier")
           router.push("/supplier/dashboard");
+        else router.push("/login");
       }
     }
   }, []);
@@ -93,7 +94,7 @@ export default function RegisterPage() {
           />
           <input
             type="text"
-            placeholder="Location"
+            placeholder="Enter your full Delivery Address"
             value={form.location}
             className="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
             onChange={(e) => setForm({ ...form, location: e.target.value })}

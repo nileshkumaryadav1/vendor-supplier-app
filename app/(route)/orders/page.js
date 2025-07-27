@@ -40,14 +40,41 @@ export default function OrderedItemPage() {
     }
   }, [router]);
 
+  const handleCancelOrder = async (materialId, orderId) => {
+    const confirmDelete = confirm(
+      "Are you sure you want to cancel this order?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(`/api/orders`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ vendorId: user._id, materialId }),
+      });
+
+      if (res.ok) {
+        setOrders((prev) => prev.filter((order) => order._id !== orderId));
+      } else {
+        const errorData = await res.json();
+        alert(
+          "Failed to cancel order: " + (errorData.message || "Unknown error.")
+        );
+      }
+    } catch (err) {
+      console.error("Error canceling order:", err);
+      alert("Something went wrong while canceling the order.");
+    }
+  };
+
   const renderStatus = (status) => {
     switch (status) {
-      case "pending":
-        return <span className="text-yellow-600 font-medium">Pending</span>;
-      case "confirmed":
-        return <span className="text-green-600 font-medium">Confirmed</span>;
-      case "cancelled":
-        return <span className="text-red-600 font-medium">Cancelled</span>;
+      case "Processing":
+        return <span className="text-yellow-600 font-medium">Processing</span>;
+      case "Shipped":
+        return <span className="text-blue-600 font-medium">Shipped</span>;
+      case "Delivered":
+        return <span className="text-green-600 font-medium">Delivered</span>;
       default:
         return <span className="text-gray-500">{status}</span>;
     }
@@ -62,12 +89,10 @@ export default function OrderedItemPage() {
     );
   }
 
-  console.log(orders);
-
   return (
-    <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)] px-4 py-10">
+    <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)] md:px-4 px-2 md:py-10 py-2">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold flex items-center gap-2 mb-6">
+        <h1 className="text-lg md:text-2xl font-bold flex items-center gap-2 md:mb-6 mb-2">
           <PackageCheck size={24} /> Your Orders
         </h1>
 
@@ -86,22 +111,32 @@ export default function OrderedItemPage() {
                 <h2 className="text-lg font-semibold mb-1">
                   {order.materialId?.name || "Unnamed Material"}
                 </h2>
-                <p>Quantity: <strong>{order.quantity}</strong></p>
-                <p>Total Price: ₹<strong>{order.totalPrice}</strong></p>
+                <p>
+                  Quantity: <strong>{order.quantity}</strong>
+                </p>
+                <p>
+                  Total Price: ₹<strong>{order.totalPrice}</strong>
+                </p>
                 <p>Status: {renderStatus(order.status)}</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  Payment Method: {order.paymentMethod}
+                </p>
                 <p className="text-sm text-gray-500 mt-1">
                   Ordered on: {new Date(order.createdAt).toLocaleDateString()}
                 </p>
                 <p className="text-sm text-gray-500 mt-1">
-                  Delivery Date:{" "}
-                  {new Date(order.deliveryDate).toLocaleDateString()}
+                  Delivery Location: {order.location}
                 </p>
-                <p className="text-sm text-gray-500 mt-1">
-                  Delivery Address: {order.deliveryAddress}
-                </p>
-                <p className="text-sm text-gray-500 mt-1">
-                  Delivery Time: {order.deliveryTime}
-                </p>
+
+                <button
+                  onClick={() =>
+                    handleCancelOrder(order.materialId?._id, order._id)
+                  }
+                  className="mt-4 px-3 py-1 rounded-md bg-red-500 text-white hover:bg-red-600 transition"
+                  disabled={["Shipped", "Delivered"].includes(order.status)}
+                >
+                  Cancel order
+                </button>
               </div>
             ))}
           </div>

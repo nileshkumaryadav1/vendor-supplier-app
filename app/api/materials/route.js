@@ -1,11 +1,11 @@
 import connectDB from "@/lib/db";
 import Material from "@/models/Material";
 
-export async function GET(req) {
+export async function GET() {
   await connectDB();
 
   try {
-    const materials = await Material.find({});
+    const materials = await Material.find({}).lean();
 
     return new Response(JSON.stringify(materials), {
       status: 200,

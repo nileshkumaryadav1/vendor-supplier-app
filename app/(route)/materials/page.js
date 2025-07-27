@@ -15,18 +15,20 @@ export default function MaterialsPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user || user.role !== "vendor") {
-      router.push("/login");
-    }
-
-    fetch("/api/materials")
-      .then((res) => res.json())
-      .then((data) => {
-        setMaterials(data);
-        setFilteredMaterials(data);
+    const fetchMaterials = async () => {
+      try {
+        const res = await fetch("/api/materials");
+        const data = await res.json();
+        setMaterials(data || []);
+        setFilteredMaterials(data || []);
+      } catch (err) {
+        console.error("Error fetching materials:", err);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchMaterials();
   }, []);
 
   useEffect(() => {
@@ -34,17 +36,15 @@ export default function MaterialsPage() {
 
     if (searchTerm) {
       updated = updated.filter((mat) =>
-        mat.name.toLowerCase().includes(searchTerm.toLowerCase())
+        mat.name?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     if (locationFilter) {
-      updated = updated.filter(
-        (mat) =>
-          mat.supplierId?.location &&
-          mat.supplierId.location
-            .toLowerCase()
-            .includes(locationFilter.toLowerCase())
+      updated = updated.filter((mat) =>
+        mat.supplierId?.location
+          ?.toLowerCase()
+          .includes(locationFilter.toLowerCase())
       );
     }
 
@@ -57,15 +57,17 @@ export default function MaterialsPage() {
     setFilteredMaterials(updated);
   }, [searchTerm, locationFilter, sortOrder, materials]);
 
-  if (loading)
+  if (loading) {
     return (
       <p className="text-center mt-10 text-gray-500 text-sm">
         Loading materials...
       </p>
     );
+  }
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-10">
+      {/* Heading */}
       <div className="flex items-center gap-2 mb-6">
         <Package className="text-[var(--accent)]" size={26} />
         <h1 className="text-3xl font-bold text-gray-800">
@@ -124,29 +126,34 @@ export default function MaterialsPage() {
               </span>
 
               {/* Image */}
-              {mat.imageUrl && (
-                <img
-                  src={mat.imageUrl}
-                  alt={mat.name}
-                  className="rounded-lg h-40 w-full object-cover mb-4"
-                />
-              )}
+              <div className="h-40 mb-4 rounded-lg overflow-hidden bg-gray-100">
+                {mat.imageUrl ? (
+                  <img
+                    src={mat.imageUrl}
+                    alt={mat.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="h-full w-full flex items-center justify-center text-sm text-gray-400">
+                    No image
+                  </div>
+                )}
+              </div>
 
-              {/* Content */}
+              {/* Info */}
               <h2 className="text-xl font-semibold text-gray-800">
                 {mat.name}
               </h2>
-              <p className="text-sm text-gray-500 mb-1">{mat.category}</p>
-              <p className="text-sm mb-1">💰 ₹{mat.pricePerKg} / kg</p>
-              <p className="text-sm mb-1">
-                📦 {mat.availableQuantity} kg in stock
-              </p>
+              <p className="text-sm text-gray-500">{mat.category}</p>
+              <p className="text-sm">💰 ₹{mat.pricePerKg} / kg</p>
+              <p className="text-sm">📦 {mat.availableQuantity} kg in stock</p>
               <p className="text-sm mb-2">🏷️ Grade: {mat.qualityGrade}</p>
 
               {/* Supplier */}
               <p className="text-xs text-gray-500 mb-2">
-                Supplier: <strong>{mat.supplierId?.name}</strong> (
-                {mat.supplierId?.location})
+                Supplier:{" "}
+                <strong>{mat.supplierId?.name || "N/A"}</strong> (
+                {mat.supplierId?.location || "Unknown"})
               </p>
 
               {/* Static Rating */}

@@ -7,7 +7,7 @@ const MaterialSchema = new mongoose.Schema({
   availableQuantity: Number,
   description: String,
   imageUrl: String,
-  qualityGrade: { type: String, enum: ["A", "B", "C"], default: "B" },
+  qualityGrade: { type: String, enum: ["A", "B", "C"], default: "A" },
   location: String,
   supplierId: {
     type: mongoose.Schema.Types.ObjectId,

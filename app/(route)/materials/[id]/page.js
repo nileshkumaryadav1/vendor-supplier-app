@@ -24,8 +24,12 @@ export default function MaterialDetailPage() {
       .then((data) => {
         setMaterial(data);
         setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Fetch error:", err);
+        setLoading(false);
       });
-  }, [id]);
+  }, [id, router]);
 
   const handleOrder = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -51,37 +55,36 @@ export default function MaterialDetailPage() {
           materialId: material._id,
           quantity: Number(quantity),
           totalPrice: Number(quantity) * Number(material.pricePerKg),
+          location: user.location,
+          paymentMethod: "Cash",
         }),
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        console.log("Order response:", data); // 🔍 Debug log
-        alert("Order placed successfully!");
+      const result = await res.json();
 
-        // Wait 500ms before redirecting
-        setTimeout(() => {
-          router.push("/dashboard");
-        }, 500);
+      if (res.ok) {
+        alert("✅ Order placed successfully!");
+        setTimeout(() => router.push("/dashboard"), 600);
       } else {
-        const errData = await res.json();
-        alert("Error placing order: " + errData.message);
-        console.error(errData);
+        alert("Error placing order: " + result.message);
       }
     } catch (err) {
-      console.error("Unexpected error:", err);
+      console.error(err);
       alert("Unexpected error occurred.");
     }
   };
 
   if (loading)
     return (
-      <p className="text-center mt-10 text-[color:var(--foreground)]">
-        Loading...
+      <p className="text-center mt-10 text-gray-500 text-sm">
+        Loading material details...
       </p>
     );
+
   if (!material)
-    return <p className="text-center text-red-500">Material not found.</p>;
+    return (
+      <p className="text-center text-red-500 mt-10">Material not found.</p>
+    );
 
   const totalPrice = Number(quantity) * Number(material.pricePerKg);
 
@@ -89,48 +92,49 @@ export default function MaterialDetailPage() {
     <section className="min-h-screen bg-[color:var(--background)] text-[color:var(--foreground)] px-6 py-14 md:px-20">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Left Image */}
-        {material.imageUrl && (
-          <img
-            src={material.imageUrl}
-            alt={material.name}
-            className="w-full rounded-2xl shadow-lg border border-[color:var(--border)]"
-          />
-        )}
+        <div>
+          {material.imageUrl ? (
+            <img
+              src={material.imageUrl}
+              alt={material.name}
+              className="w-full rounded-2xl shadow-md border border-[color:var(--border)] object-cover h-80"
+            />
+          ) : (
+            <div className="w-full h-80 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-500 text-sm border">
+              No Image Available
+            </div>
+          )}
+        </div>
 
         {/* Right Content */}
         <div className="flex flex-col gap-4">
-          <h1 className="text-4xl font-bold">{material.name}</h1>
+          <h1 className="text-4xl font-bold text-gray-900">{material.name}</h1>
           <p className="text-[color:var(--muted-foreground)] font-medium text-base">
             {material.category}
           </p>
 
-          <div className="space-y-1 mt-2 text-base leading-6">
+          <div className="space-y-2 text-base leading-6">
             <p>
-              💰 <strong>₹{material.pricePerKg}</strong> per kg
+              💰 Price:{" "}
+              <strong className="text-green-700">
+                ₹{material.pricePerKg} / kg
+              </strong>
             </p>
+            <p>📦 Stock: {material.availableQuantity} kg</p>
+            <p>🏷️ Grade: {material.qualityGrade}</p>
             <p>
-              📦 Stock: <strong>{material.availableQuantity} kg</strong>
+              📍 Location: {material.supplierId?.location || "Not specified"}
             </p>
-            <p>
-              🏷️ Grade: <strong>{material.qualityGrade}</strong>
-            </p>
-            <p>
-              📍 Location: <strong>{material.location}</strong>
-            </p>
-            <p>
-              🚚 Estimated Delivery: <strong>3–5 days</strong>
-            </p>
-            <p>
-              ⭐ Rating: <strong>{material.rating || "4.2"}</strong> / 5
-            </p>
+            <p>🚚 Estimated Delivery: 3–5 days</p>
+            <p>⭐ Rating: {material.rating || "4.2"} / 5</p>
           </div>
 
           <div className="bg-[color:var(--muted)] p-4 rounded-xl border border-[color:var(--border)] mt-4">
             <p className="font-semibold">Supplier Info:</p>
-            <p className="text-sm text-[color:var(--muted-foreground)]">
-              {material.supplierId?.name} (
+            <p className="text-sm text-[color:var(--muted-foreground)] leading-5">
+              {material.supplierId?.name || "Unnamed Supplier"} (
               {material.supplierId?.company || "Certified Supplier"})<br />
-              Contact: {material.supplierId?.email || "Not Provided"}
+              📧 {material.supplierId?.email || "Not Provided"}
             </p>
           </div>
 
@@ -143,7 +147,7 @@ export default function MaterialDetailPage() {
             </div>
           )}
 
-          {/* Quantity Selector */}
+          {/* Quantity */}
           <div className="mt-6">
             <label htmlFor="quantity" className="block font-medium mb-1">
               Select Quantity (kg):
@@ -154,7 +158,7 @@ export default function MaterialDetailPage() {
               min="1"
               max={material.availableQuantity}
               value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
+              onChange={(e) => setQuantity(Number(e.target.value))}
               className="w-full max-w-xs px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
             />
             {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
@@ -163,11 +167,12 @@ export default function MaterialDetailPage() {
             </p>
           </div>
 
+          {/* Order Button */}
           <button
             onClick={handleOrder}
-            className="mt-6 w-fit bg-green-600 hover:bg-green-700 text-white text-sm font-semibold px-6 py-2.5 rounded-full shadow transition"
+            className="mt-6 w-fit bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-6 py-2.5 rounded-full shadow transition"
           >
-            🚚 Order Now
+            🚀 Place Order
           </button>
         </div>
       </div>

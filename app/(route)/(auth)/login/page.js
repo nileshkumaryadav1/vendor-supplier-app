@@ -2,31 +2,35 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
-  const [checkingAuth, setCheckingAuth] = useState(true); // ✅ to prevent redirect before login
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    if (user) {
-      try {
+    if (typeof window !== "undefined") {
+      const user = localStorage.getItem("user");
+      if (user) {
         const userData = JSON.parse(user);
-        if (userData?.role === "vendor") router.push("/dashboard");
-        else if (userData?.role === "supplier") router.push("/supplier/dashboard");
-      } catch (err) {
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
+        if (userData.role === "vendor") router.push("/dashboard");
+        else if (userData.role === "supplier")
+          router.push("/supplier/dashboard");
+        else router.push("/login");
       }
     }
-    setCheckingAuth(false); // ✅ done checking auth
-  }, [router]);
+  }, []);
 
-  const handleLogin = async (e) => {
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
       const res = await fetch("/api/login", {
@@ -37,61 +41,79 @@ export default function LoginPage() {
 
       const data = await res.json();
 
-      if (res.ok) {
-        localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("token", data.token);
-
-        if (data.user.role === "vendor") router.push("/dashboard");
-        else if (data.user.role === "supplier") router.push("/supplier/dashboard");
-      } else {
-        setError(data.error || "Login failed");
+      if (!res.ok) {
+        throw new Error(data.message || "Login failed");
       }
+
+      // Store both token and user info
+      console.log(data.user);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("token", data.token);
+
+      // Optional success toast (replace with real toast lib in production)
+      // alert("Login successful!");
+
+      router.push("/dashboard");
     } catch (err) {
-      setError("Something went wrong. Try again later.");
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (checkingAuth) return null; // ⏳ Don't render login form while checking auth
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[color:var(--background)] px-4">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6">
-        <h1 className="text-3xl font-bold text-center text-[color:var(--accent)] mb-6">Welcome Back</h1>
+    <main className="md:min-h-screen py-5 flex flex-col items-center justify-center bg-[var(--background)] text-[var(--foreground)] px-4">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-5 p-6 rounded-2xl shadow-xl border border-[var(--border)] bg-[var(--card)] w-full max-w-md transition-all"
+      >
+        <h2 className="text-2xl font-bold text-center">User Login</h2>
 
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          className="w-full p-3 rounded-xl border border-[var(--border)] bg-transparent focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+          className="w-full p-3 rounded-xl border border-[var(--border)] bg-transparent focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+          required
+        />
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            type="email"
-            value={form.email}
-            placeholder="Email"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            required
-          />
-          <input
-            type="password"
-            value={form.password}
-            placeholder="Password"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-            required
-          />
-          <button
-            type="submit"
-            className="w-full bg-[color:var(--accent)] hover:bg-green-700 text-white font-semibold py-2 rounded-md transition duration-200"
-          >
-            Login
-          </button>
-        </form>
+        {error && (
+          <p className="text-red-500 text-sm text-center animate-pulse">{error}</p>
+        )}
 
-        <p className="text-center mt-4 text-sm">
-          Don’t have an account?{" "}
-          <a href="/register" className="text-[color:var(--accent)] hover:underline font-medium">
-            Register
-          </a>
-        </p>
-      </div>
-    </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full py-3 rounded-xl bg-[var(--accent)] text-white font-semibold hover:opacity-90 transition flex justify-center items-center"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="animate-spin mr-2 h-5 w-5" />
+              Logging in...
+            </>
+          ) : (
+            "Login"
+          )}
+        </button>
+      </form>
+
+      <Link
+        href="/register"
+        className="mt-6 text-[var(--highlight)] hover:underline text-sm"
+      >
+        Don&apos;t have an account? Register here.
+      </Link>
+    </main>
   );
 }
