@@ -14,17 +14,16 @@ export default function AdminPage() {
             Admin Control Panel
           </h1>
           <p className="text-[color:var(--secondary)] text-sm">
-            For Authorized Access Only — Manage & Power the Fest 🚀
+            For Authorized Access Only — Manage & Power the Platform 🚀
           </p>
         </div>
 
-        <Link
-          href="/admin/homepage"
+        <p
           className="text-[color:var(--highlight)] hover:text-[color:var(--accent)] flex items-center gap-2 border border-[color:var(--border)] px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg hover:scale-[1.03] transition-all duration-300"
         >
           <Sparkles className="w-5 h-5" />
           <span>Enter Control Panel</span>
-        </Link>
+        </p>
       </div>
     </main>
   );

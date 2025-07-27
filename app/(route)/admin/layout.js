@@ -7,7 +7,6 @@ import {
   ShieldCheck,
   LayoutDashboard,
   Users,
-  Trophy,
   Settings,
   Menu,
   LogOut,
