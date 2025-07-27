@@ -25,6 +25,9 @@ export default function UserInfo({ user }) {
         {/* Academic Details */}
         <div>
           <p className="mb-1">
+            <span className="text-[color:var(--foreground)]">🏢 Shop:</span> {user.shopName}
+          </p>
+          <p className="mb-1">
             <span className="text-[color:var(--foreground)]">📍 Location:</span> {user.location}
           </p>
           <p className="mb-1">

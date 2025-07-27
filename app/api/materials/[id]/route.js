@@ -18,3 +18,19 @@ export async function GET(_req, { params }) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
+
+export async function DELETE(req, { params }) {
+  await connectDB();
+  const { id } = params;
+  await Material.findByIdAndDelete(id);
+  return new Response(JSON.stringify({ success: true }), { status: 200 });
+}
+
+export async function PUT(req, { params }) {
+  await connectDB();
+  const { id } = params;
+  const data = await req.json();
+
+  const updated = await Material.findByIdAndUpdate(id, data, { new: true });
+  return new Response(JSON.stringify(updated), { status: 200 });
+}

@@ -11,7 +11,10 @@ export default function RegisterPage() {
     password: "",
     role: "vendor",
     phone: "",
+    shopName: "",
     location: "",
+    status: "active",
+    varified: false,
   });
 
   const [loading, setLoading] = useState(false);
@@ -70,7 +73,7 @@ export default function RegisterPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
-            placeholder="Name"
+            placeholder="Your Full Name"
             value={form.name}
             className="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
             onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -78,7 +81,7 @@ export default function RegisterPage() {
           />
           <input
             type="email"
-            placeholder="Email"
+            placeholder="Email Address"
             value={form.email}
             className="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
             onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -86,10 +89,18 @@ export default function RegisterPage() {
           />
           <input
             type="tel"
-            placeholder="Phone"
+            placeholder="Phone Number"
             value={form.phone}
             className="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            required
+          />
+          <input
+            type="text"
+            placeholder="Shop Name"
+            value={form.shopName}
+            className="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
+            onChange={(e) => setForm({ ...form, shopName: e.target.value })}
             required
           />
           <input
@@ -110,7 +121,7 @@ export default function RegisterPage() {
           </select>
           <input
             type="password"
-            placeholder="Password"
+            placeholder="Set your password"
             value={form.password}
             className="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
             onChange={(e) => setForm({ ...form, password: e.target.value })}

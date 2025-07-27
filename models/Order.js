@@ -18,6 +18,7 @@ const OrderSchema = new mongoose.Schema(
       enum: ["Cash", "Online"],
       default: "Cash",
     },
+  expectedDeliveryDate: { type: Date },
   },
   { timestamps: true }
 );

@@ -1,11 +1,16 @@
 import connectDB from "@/lib/db";
 import Material from "@/models/Material";
 
-export async function GET() {
+export async function GET(req) {
   await connectDB();
 
   try {
-    const materials = await Material.find({}).lean();
+    const { searchParams } = new URL(req.url); // Extract query params
+    const supplierId = searchParams.get("supplierId"); // e.g. ?supplierId=abc123
+
+    const filter = supplierId ? { supplierId } : {};
+
+    const materials = await Material.find(filter).lean();
 
     return new Response(JSON.stringify(materials), {
       status: 200,

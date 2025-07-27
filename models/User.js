@@ -7,6 +7,7 @@ const UserSchema = new mongoose.Schema({
   password: String,
   role: { type: String, enum: ['vendor', 'supplier'], default: 'vendor' },
   location: String,
+  shopName: String,
   status: { type: String, enum: ['active', 'inactive'], default: 'active' },
   verified: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },

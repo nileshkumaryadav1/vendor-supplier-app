@@ -1,17 +1,26 @@
+// app/api/orders/route.js
+
 import connectDB from "@/lib/db";
 import Order from "@/models/Order";
 import Material from "@/models/Material";
 
-export async function GET() {
-  try {
-    // Connect to the database
-    await connectDB();
+// GET /api/orders?supplierId=...&vendorId=...
+export async function GET(req) {
+  await connectDB();
 
-    // Fetch all orders with populated references
-    const orders = await Order.find({})
-      .populate("materialId", "name") // only populate name field from Material
-      .populate("vendorId", "name")   // only populate name field from Vendor (User)
-      .populate("supplierId", "name"); // only populate name field from Supplier (User)
+  const { searchParams } = new URL(req.url);
+  const supplierId = searchParams.get("supplierId");
+  const vendorId = searchParams.get("vendorId");
+
+  const query = {};
+  if (supplierId) query.supplierId = supplierId;
+  if (vendorId) query.vendorId = vendorId;
+
+  try {
+    const orders = await Order.find(query)
+      .populate("materialId", "name pricePerKg")
+      .populate("vendorId", "name email")
+      .populate("supplierId", "name email");
 
     return new Response(JSON.stringify(orders), {
       status: 200,
@@ -19,33 +28,45 @@ export async function GET() {
     });
   } catch (error) {
     console.error("❌ Error fetching orders:", error);
-    return new Response(JSON.stringify({ error: "Failed to fetch orders" }), {
-      status: 500,
-    });
+    return new Response(
+      JSON.stringify({ error: "Failed to fetch orders" }),
+      { status: 500 }
+    );
   }
 }
 
+// POST /api/orders
 export async function POST(req) {
   await connectDB();
 
   try {
-    const { vendorId, supplierId, materialId, quantity, location } = await req.json();
+    const {
+      vendorId,
+      supplierId,
+      materialId,
+      quantity,
+      location,
+      deliveryDate, // optional
+    } = await req.json();
 
-    // Validate inputs
+    // Validation
     if (!vendorId || !supplierId || !materialId || !quantity || !location) {
-      return new Response(JSON.stringify({ error: "Missing required fields" }), { status: 400 });
+      return new Response(
+        JSON.stringify({ error: "Missing required fields" }),
+        { status: 400 }
+      );
     }
 
-    // Get material to calculate price
     const material = await Material.findById(materialId);
     if (!material) {
-      return new Response(JSON.stringify({ error: "Material not found" }), { status: 404 });
+      return new Response(
+        JSON.stringify({ error: "Material not found" }),
+        { status: 404 }
+      );
     }
 
-    // Calculate total price
     const totalPrice = material.pricePerKg * quantity;
 
-    // Create order
     const order = await Order.create({
       vendorId,
       supplierId,
@@ -53,56 +74,107 @@ export async function POST(req) {
       quantity,
       totalPrice,
       location,
-      status: "Processing", // default, can omit
+      deliveryDate: deliveryDate || null,
+      status: "Processing",
     });
 
-    return new Response(JSON.stringify({ message: "Order placed successfully", order }), {
-      status: 201,
-      headers: { "Content-Type": "application/json" },
-    });
-
+    return new Response(
+      JSON.stringify({ message: "Order placed", order }),
+      { status: 201 }
+    );
   } catch (error) {
-    console.error("Order placement failed:", error);
-    return new Response(JSON.stringify({ error: "Server error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    console.error("❌ Order placement failed:", error);
+    return new Response(
+      JSON.stringify({ error: "Server error" }),
+      { status: 500 }
+    );
   }
 }
 
+// PUT /api/orders
+export async function PUT(req) {
+  await connectDB();
+
+  try {
+    const {
+      orderId,
+      quantity,
+      location,
+      status,
+      deliveryDate, // newly added support
+    } = await req.json();
+
+    if (!orderId) {
+      return new Response(
+        JSON.stringify({ error: "Missing order ID" }),
+        { status: 400 }
+      );
+    }
+
+    const updateFields = {};
+    if (quantity !== undefined) updateFields.quantity = quantity;
+    if (location !== undefined) updateFields.location = location;
+    if (status !== undefined) updateFields.status = status;
+    if (deliveryDate !== undefined) updateFields.deliveryDate = deliveryDate;
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      updateFields,
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return new Response(
+        JSON.stringify({ error: "Order not found" }),
+        { status: 404 }
+      );
+    }
+
+    return new Response(
+      JSON.stringify({ message: "Order updated", updatedOrder }),
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("❌ Order update failed:", error);
+    return new Response(
+      JSON.stringify({ error: "Server error" }),
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE /api/orders
 export async function DELETE(req) {
   await connectDB();
 
   try {
-    const { vendorId, materialId } = await req.json();
+    const { orderId } = await req.json();
 
-    if (!vendorId || !materialId) {
-      return new Response(JSON.stringify({ error: "Missing vendor ID or material ID" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+    if (!orderId) {
+      return new Response(
+        JSON.stringify({ error: "Missing order ID" }),
+        { status: 400 }
+      );
     }
 
-    // Remove a specific order
-    const deleted = await Order.findOneAndDelete({ vendorId, materialId });
+    const deleted = await Order.findByIdAndDelete(orderId);
 
     if (!deleted) {
-      return new Response(JSON.stringify({ error: "Order not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({ error: "Order not found" }),
+        { status: 404 }
+      );
     }
 
-    return new Response(JSON.stringify({ message: "Order deleted successfully" }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-
+    return new Response(
+      JSON.stringify({ message: "Order deleted" }),
+      { status: 200 }
+    );
   } catch (error) {
-    console.error("Order cancellation error:", error);
-    return new Response(JSON.stringify({ error: "Failed to cancel order" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    console.error("❌ Order deletion failed:", error);
+    return new Response(
+      JSON.stringify({ error: "Server error" }),
+      { status: 500 }
+    );
   }
 }
