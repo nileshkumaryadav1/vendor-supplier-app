@@ -25,28 +25,55 @@ export default function SupplierOrders() {
   );
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-6">Order Received</h1>
+    <div className="p-6 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-8 text-gray-800">
+        📦 Orders Received
+      </h1>
 
       {filteredOrders.length === 0 ? (
-        <p>No orders found.</p>
+        <p className="text-gray-600">No orders received yet.</p>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {filteredOrders.map((order) => (
             <div
               key={order._id}
-              className="bg-white p-4 rounded-md shadow-md border"
+              className="bg-white border border-gray-200 shadow-md rounded-xl p-6 hover:shadow-lg transition"
             >
-              <h2 className="text-lg font-semibold">
+              <h2 className="text-xl font-semibold text-indigo-700 mb-2">
                 {order.materialId?.name || "Material Name Not Found"}
               </h2>
-              <p>Vendor: {order.vendorId?.name}</p>
-              <p>Supplier: {order.supplierId?.name}</p>
-              <p>Quantity: {order.quantity}</p>
-              <p>Total: ₹{order.totalPrice}</p>
-              <p>
-                Status: <strong>{order.status}</strong>
-              </p>
+
+              <div className="text-sm text-gray-700 space-y-1">
+                <p>
+                  <span className="font-medium">Vendor:</span>{" "}
+                  {order.vendorId?.name || "Unknown Vendor"}
+                </p>
+                <p>
+                  <span className="font-medium">Supplier:</span>{" "}
+                  {order.supplierId?.name || "Unknown Supplier"}
+                </p>
+                <p>
+                  <span className="font-medium">Quantity:</span> {order.quantity}
+                </p>
+                <p>
+                  <span className="font-medium">Total Price:</span> ₹
+                  {order.totalPrice}
+                </p>
+                <p>
+                  <span className="font-medium">Status:</span>{" "}
+                  <span
+                    className={`inline-block px-2 py-1 rounded text-xs font-semibold ${
+                      order.status === "pending"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : order.status === "delivered"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-gray-200 text-gray-800"
+                    }`}
+                  >
+                    {order.status}
+                  </span>
+                </p>
+              </div>
             </div>
           ))}
         </div>

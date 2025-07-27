@@ -85,7 +85,7 @@ export default function AdminLoginPage() {
 
           <button
             type="submit"
-            className="w-full bg-[var(--accent)] hover:bg-[var(--highlight)] text-white font-semibold py-2 rounded-md transition duration-200"
+            className="w-full bg-[var(--accent)] hover:bg-green-600 hover:cursor-pointer text-white font-semibold py-2 rounded-md transition duration-200"
           >
             Log In
           </button>
